@@ -1,0 +1,56 @@
+[debug] [2018-09-17T08:13:37.431Z] ----------------------------------------------------------------------
+[debug] [2018-09-17T08:13:37.435Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Keji\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-09-17T08:13:37.435Z] CLI Version:   4.2.1
+[debug] [2018-09-17T08:13:37.435Z] Platform:      win32
+[debug] [2018-09-17T08:13:37.435Z] Node Version:  v8.11.3
+[debug] [2018-09-17T08:13:37.437Z] Time:          Mon Sep 17 2018 16:13:37 GMT+0800 (Malay Peninsula Standard Time)
+[debug] [2018-09-17T08:13:37.437Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-17T08:13:37.461Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-17T08:13:37.462Z] > authorizing via signed-in user
+[debug] [2018-09-17T08:13:37.464Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-09-17T08:13:37.464Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+
+[debug] [2018-09-17T08:13:38.197Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-17T08:13:38.205Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/classrecordsystem-f6067  
+ 
+[debug] [2018-09-17T08:13:39.694Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-17T08:13:39.695Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/classrecordsystem-f6067  
+ 
+[debug] [2018-09-17T08:13:41.875Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\Keji\classrecordSystem\ClassRecordSystemWeb'...
+[info] 
+[debug] [2018-09-17T08:13:41.878Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/345531015638/clients/_:getWebAppConfig  
+ 
+[debug] [2018-09-17T08:13:43.189Z] <<< HTTP RESPONSE 200
+[info] i  hosting[classrecordsystem-f6067]: Serving hosting files from: public
+[info] +  hosting[classrecordsystem-f6067]: Local server: http://localhost:5000
+[debug] [2018-09-17T14:27:23.292Z] ----------------------------------------------------------------------
+[debug] [2018-09-17T14:27:23.295Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Keji\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-09-17T14:27:23.295Z] CLI Version:   4.2.1
+[debug] [2018-09-17T14:27:23.295Z] Platform:      win32
+[debug] [2018-09-17T14:27:23.295Z] Node Version:  v8.11.3
+[debug] [2018-09-17T14:27:23.295Z] Time:          Mon Sep 17 2018 22:27:23 GMT+0800 (Malay Peninsula Standard Time)
+[debug] [2018-09-17T14:27:23.295Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-17T14:27:23.310Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-17T14:27:23.310Z] > authorizing via signed-in user
+[debug] [2018-09-17T14:27:23.312Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-09-17T14:27:23.312Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+
+[debug] [2018-09-17T14:27:24.227Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-17T14:27:24.232Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/classrecordsystem-f6067  
+ 
+[debug] [2018-09-17T14:27:26.040Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-17T14:27:26.041Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/classrecordsystem-f6067  
+ 
+[debug] [2018-09-17T14:27:27.992Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\Keji\classrecordSystem\ClassRecordSystemWeb'...
+[info] 
+[debug] [2018-09-17T14:27:28.014Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/345531015638/clients/_:getWebAppConfig  
+ 
+[debug] [2018-09-17T14:27:29.825Z] <<< HTTP RESPONSE 200
+[info] i  hosting[classrecordsystem-f6067]: Serving hosting files from: public
+[info] +  hosting[classrecordsystem-f6067]: Local server: http://localhost:5000

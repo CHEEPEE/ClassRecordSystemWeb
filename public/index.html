@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" >
+    <script src="assets/jquery-3.3.1.slim.min.js" ></script>
+    <script src="assets/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
+    <script src="assets/js/bootstrap.min.js" ></script>
+    <script crossorigin src="assets/react.development.js"></script>
+    <script crossorigin src="assets/react-dom.development.js"></script>
+
+    <!-- update the version number as needed -->
+
+    <style>
+    body{
+      height: 100%;
+    }
+    html{
+      height: 100%;
+    }
+    .the-nun{
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .active{
+      color: white !important;
+      background-color:rgb(39, 39, 39) !important;
+    }
+    </style>
+  </head>
+  <body>
+  <div class="container-fluid the-nun h-100 bg-light" id = "app">
+
+  </div>
+  
+  </body>
+  <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCNwVwibl12fo73OrZH4hQ9QC8LPvWkOIo",
+      authDomain: "classrecordsystem-f6067.firebaseapp.com",
+      databaseURL: "https://classrecordsystem-f6067.firebaseio.com",
+      projectId: "classrecordsystem-f6067",
+      storageBucket: "classrecordsystem-f6067.appspot.com",
+      messagingSenderId: "345531015638"
+    };
+  const firebaseApp = firebase.initializeApp(config);
+  const db = firebaseApp.firestore();
+  db.settings({timestampsInSnapshots: true})
+</script>
+
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+<script src="dashboard.js" type="text/babel"></script>
+<script src="department.js" type="text/babel"></script>
+<script src="auth.js" type="text/babel"></script>
+<script src="index.js" type="text/babel"></script>
+
+</html>
