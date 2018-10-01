@@ -3,8 +3,17 @@ class Dashbaord extends React.Component {
       user: firebase.auth().currentUser
     };
   
-    renderRequrements() {
-      
+    renderTeachers() {
+      const mainContainer = document.querySelector("#mainContainer");
+      ReactDOM.render(
+          <ManageTeachers/>,mainContainer
+      )
+    }
+    renderStudents(){
+      const mainContainer = document.querySelector("#mainContainer");
+      ReactDOM.render(
+          <ManageStudents/>,mainContainer
+      )
     }
   
     renderDashBoard() {
@@ -102,7 +111,7 @@ class Dashbaord extends React.Component {
                   className="list-group-item bg-transparent text-muted border-0 rounded-0 list-group-item-action"
                   data-toggle="list"
                   role="tab"
-                 
+                  onClick = {this.renderTeachers.bind(this)}
                 >
                   Teacher Management
                 </a>
@@ -110,7 +119,7 @@ class Dashbaord extends React.Component {
                   className="list-group-item bg-transparent text-muted border-0 rounded-0 list-group-item-action"
                   data-toggle="list"
                   role="tab"
-                 
+                  onClick ={this.renderStudents.bind(this)}
                 >
                   Student Management
                 </a>

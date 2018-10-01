@@ -69,6 +69,7 @@ class ManageDepartment extends React.Component {
             <div className="list-group" id="departmentItemsContainer" />
           </div>
           <div className="col" id="manageDepartmentContainer" />
+          <div className ="col"></div>
         </div>
         <div
           className="modal fade"
@@ -163,7 +164,7 @@ class DepartmentItem extends React.Component {
       <React.Fragment>
         <div className="list-group-item border-0 p-3 shadow-sm mt-1 list-group-item-action">
           <div className="row">
-            <div className="col">{this.props.department}</div>
+            <div className="col-12">{this.props.department}</div>
             <div className="col d-flex flex-row-reverse ">
               <button type="button" class="btn btn-danger btn-sm">
                 delete
@@ -401,14 +402,20 @@ class ProgramsItem extends React.Component {
       <React.Fragment>
         <div className="list-group-item ml-2 mt-2 p-2 border-0 shadow-sm list-group-item-action">
           <div className="row">
-            <div className="col">
+            <div className="col-12">
             {this.props.program}
             </div>
-            <div className="col-auto">
+            <div className="col-auto mt-2">
+            <button
+                type="button"
+                className="btn mr-2 btn-success"
+              >
+                Manage
+              </button>
               <button
                 type="button"
                 onClick = {this.updateProgram.bind(this)}
-                className="btn mr-2 btn-success"
+                className="btn mr-2 btn-primary"
               >
                 Update
               </button>
