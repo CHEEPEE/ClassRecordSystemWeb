@@ -24,7 +24,6 @@ class ManageStudents extends React.Component {
         );
       });
     }
-
     componentDidMount() {
       this.getTeacherList();
     }
@@ -38,7 +37,7 @@ class ManageStudents extends React.Component {
             <div className="group-list w-100">
               <div className="list-group-item border-0">
                 <div className="row">
-                  <div className="col font-weight-bold">Teacher Name</div>
+                  <div className="col font-weight-bold">Student Name</div>
                   <div className="col font-weight-bold">Account Status</div>
                 </div>
               </div>

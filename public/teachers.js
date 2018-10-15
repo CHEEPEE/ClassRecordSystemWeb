@@ -50,19 +50,213 @@ class ManageTeachers extends React.Component {
 }
 
 class TeacherItem extends React.Component {
-  state = {};
-  setStatus(){
+  state = { extendView: "d-none" };
+  setStatus() {
     db.collection("teacherProfile")
-    .doc(this.props.id)
-    .update("accountStatus",this.props.accountStatus == "active"? "pending":"active");
+      .doc(this.props.id)
+      .update(
+        "accountStatus",
+        this.props.accountStatus == "active" ? "pending" : "active"
+      );
+  }
+  togleExtend() {
+    this.setState({
+      extendView: this.state.extendView == "d-none" ? "visible" : "d-none"
+    });
+  }
+  getSubjectList() {
+    let sup = this;
+    db.collection("class")
+      .where("userId", "==", this.props.id)
+      .onSnapshot(function(querySnapshot) {
+        let object = [];
+        querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          object.push(doc.data());
+          console.log(doc.data());
+        });
+        var listItem = object.map(object => (
+          <TeacherSubjectItem
+            key={object.classKey}
+            classKey={object.classKey}
+            name={object.name}
+            description={object.description}
+            sched={object.sched}
+          />
+        ));
+        ReactDOM.render(
+          <React.Fragment>{listItem}</React.Fragment>,
+          document.querySelector("#teachersSubjectListContainer" + sup.props.id)
+        );
+      });
+  }
+  componentDidMount() {
+    this.getSubjectList();
+  }
+  render() {
+    return (
+      <div className="list-group-item mt-1 border-0 bg-light">
+        <div className="row" onClick={this.togleExtend.bind(this)}>
+          <div className="col">{this.props.teacherName}</div>
+          <div className="col">
+            <button
+              onClick={this.setStatus.bind(this)}
+              type="button"
+              className={
+                "btn text-white btn-" +
+                (this.props.accountStatus == "active" ? "success" : "warning")
+              }
+            >
+              {this.props.accountStatus}
+            </button>
+          </div>
+        </div>
+        <div className={"row " + this.state.extendView}>
+          <div className="col-12">
+            <div className="row">
+              <div className="col">
+                <h5>Teacher's subjects</h5>
+              </div>
+            </div>
+            <div className="row">
+              <div
+                className="group-list w-100"
+                id={"teachersSubjectListContainer" + this.props.id}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+class TeacherSubjectItem extends React.Component {
+  state = {};
+  addToList(){
+    let sup = this;
+    let studentName = $("#addToListStudents"+this.props.classKey).val();
+    let key = db.collection("subjectStudentList").doc().id;
+    if(studentName!=null){
+      db.collection("subjectStudentList").doc(key).set({
+        classKey:sup.props.classKey,
+        key:key,
+        studentName:studentName
+      }).then(function(){
+        $("#addToListStudents"+sup.props.classKey).val("");
+      }
+      );
+    }
+  }
+  getstudentList(){
+    let sup = this;
+    db.collection("subjectStudentList")
+      .where("classKey", "==", this.props.classKey)
+      .onSnapshot(function(querySnapshot) {
+        let object = [];
+        querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          object.push(doc.data());
+          console.log(doc.data());
+        });
+        var listItem = object.map(object => (
+          <StudentListOnTeacherSubjectItem
+            key={object.key}
+            name = {object.studentName}
+            classKey = {object.classKey}
+          />
+        ));
+        ReactDOM.render(
+          <React.Fragment>{listItem}</React.Fragment>,
+          document.querySelector("#studentListForSubjects" + sup.props.classKey)
+        );
+      });
+  }
+  componentDidMount(){
+    this.getstudentList();
   }
   render() {
     return (
       <div className="list-group-item mt-1 border-0 bg-light">
         <div className="row">
-          <div className="col">{this.props.teacherName}</div>
-          <div className="col"><button onClick ={this.setStatus.bind(this)} type="button" className={"btn text-white btn-"+(this.props.accountStatus=="active"?"success":"warning")}>{this.props.accountStatus}</button></div>
+          <div className="col ml-3 text-info">{this.props.name}</div>
+          <div className="col">
+            <div data-toggle="modal" data-target={"#viewList"+this.props.classKey} className="btn btn-dark">
+              List
+            </div>
+          </div>
         </div>
+        <div
+          className="modal fade"
+          id={"viewList"+this.props.classKey}
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                 {this.props.name} student List
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+              <div className = "row">
+                <div className = "col-9">
+                  <div class="form-group">
+                    <input type="email" class="form-control" id={"addToListStudents"+this.props.classKey} aria-describedby="emailHelp" placeholder="Enter Student Name"/>
+                  </div>
+                </div>
+                <div className = "col">
+                   <div onClick = {this.addToList.bind(this)} className="btn btn-dark">
+                    Add to List
+                  </div>
+                </div>
+
+              </div>
+              <div className="row">
+                <div className="group-list w-100" id = {"studentListForSubjects"+this.props.classKey} />
+              </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+class StudentListOnTeacherSubjectItem extends React.Component {
+  state = {};
+  render() {
+    return (
+      <div className="list-group-item mt-1 border-0 bg-light">
+        <div className="row">
+          <div className="col ml-3 text-info">{this.props.name}</div>
+            <div className = "col-auto">
+              <button type="button" class="btn btn-danger">Remove List</button>
+            </div>
+          </div>
+          <div classKey = "row">
+        </div>
+      
       </div>
     );
   }
