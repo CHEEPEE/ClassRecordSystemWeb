@@ -133,22 +133,24 @@ class TeacherItem extends React.Component {
 
 class TeacherSubjectItem extends React.Component {
   state = {};
-  addToList(){
+  addToList() {
     let sup = this;
-    let studentName = $("#addToListStudents"+this.props.classKey).val();
+    let studentName = $("#addToListStudents" + this.props.classKey).val();
     let key = db.collection("subjectStudentList").doc().id;
-    if(studentName!=null){
-      db.collection("subjectStudentList").doc(key).set({
-        classKey:sup.props.classKey,
-        key:key,
-        studentName:studentName
-      }).then(function(){
-        $("#addToListStudents"+sup.props.classKey).val("");
-      }
-      );
+    if (studentName != null) {
+      db.collection("subjectStudentList")
+        .doc(key)
+        .set({
+          classKey: sup.props.classKey,
+          key: key,
+          studentName: studentName
+        })
+        .then(function() {
+          $("#addToListStudents" + sup.props.classKey).val("");
+        });
     }
   }
-  getstudentList(){
+  getstudentList() {
     let sup = this;
     db.collection("subjectStudentList")
       .where("classKey", "==", this.props.classKey)
@@ -162,8 +164,8 @@ class TeacherSubjectItem extends React.Component {
         var listItem = object.map(object => (
           <StudentListOnTeacherSubjectItem
             key={object.key}
-            name = {object.studentName}
-            classKey = {object.classKey}
+            name={object.studentName}
+            classKey={object.classKey}
           />
         ));
         ReactDOM.render(
@@ -172,7 +174,7 @@ class TeacherSubjectItem extends React.Component {
         );
       });
   }
-  componentDidMount(){
+  componentDidMount() {
     this.getstudentList();
   }
   render() {
@@ -181,24 +183,31 @@ class TeacherSubjectItem extends React.Component {
         <div className="row">
           <div className="col ml-3 text-info">{this.props.name}</div>
           <div className="col">
-            <div data-toggle="modal" data-target={"#viewList"+this.props.classKey} className="btn btn-dark">
+            <div
+              data-toggle="modal"
+              data-target={"#viewList" + this.props.classKey}
+              className="btn btn-dark"
+            >
               List
             </div>
           </div>
         </div>
         <div
           className="modal fade"
-          id={"viewList"+this.props.classKey}
+          id={"viewList" + this.props.classKey}
           tabindex="-1"
           role="dialog"
           aria-labelledby="exampleModalLabel"
           aria-hidden="true"
         >
-          <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div
+            className="modal-dialog modal-dialog-centered modal-lg"
+            role="document"
+          >
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel">
-                 {this.props.name} student List
+                  {this.props.name} student List
                 </h5>
                 <button
                   type="button"
@@ -210,22 +219,33 @@ class TeacherSubjectItem extends React.Component {
                 </button>
               </div>
               <div className="modal-body">
-              <div className = "row">
-                <div className = "col-9">
-                  <div class="form-group">
-                    <input type="email" class="form-control" id={"addToListStudents"+this.props.classKey} aria-describedby="emailHelp" placeholder="Enter Student Name"/>
+                <div className="row">
+                  <div className="col-9">
+                    <div class="form-group">
+                      <input
+                        type="email"
+                        class="form-control"
+                        id={"addToListStudents" + this.props.classKey}
+                        aria-describedby="emailHelp"
+                        placeholder="Enter Student Name"
+                      />
+                    </div>
+                  </div>
+                  <div className="col">
+                    <div
+                      onClick={this.addToList.bind(this)}
+                      className="btn btn-dark"
+                    >
+                      Add to List
+                    </div>
                   </div>
                 </div>
-                <div className = "col">
-                   <div onClick = {this.addToList.bind(this)} className="btn btn-dark">
-                    Add to List
-                  </div>
+                <div className="row">
+                  <div
+                    className="group-list w-100"
+                    id={"studentListForSubjects" + this.props.classKey}
+                  />
                 </div>
-
-              </div>
-              <div className="row">
-                <div className="group-list w-100" id = {"studentListForSubjects"+this.props.classKey} />
-              </div>
               </div>
               <div className="modal-footer">
                 <button
@@ -249,14 +269,16 @@ class StudentListOnTeacherSubjectItem extends React.Component {
     return (
       <div className="list-group-item mt-1 border-0 bg-light">
         <div className="row">
-          <div className="col ml-3 text-info">{this.props.name}</div>
-            <div className = "col-auto">
-              <button type="button" class="btn btn-danger">Remove List</button>
-            </div>
+          <div className="col ml-3 text-info">
+            <h5>{this.props.name}/</h5>
           </div>
-          <div classKey = "row">
+          <div className="col-auto">
+            <button type="button" class="btn btn-danger">
+              Remove List
+            </button>
+          </div>
         </div>
-      
+        <div classKey="row" />
       </div>
     );
   }

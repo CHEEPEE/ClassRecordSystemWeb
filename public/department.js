@@ -69,7 +69,7 @@ class ManageDepartment extends React.Component {
             <div className="list-group" id="departmentItemsContainer" />
           </div>
           <div className="col" id="manageDepartmentContainer" />
-          <div className ="col"></div>
+          <div className="col" id="manageYearLevel" />
         </div>
         <div
           className="modal fade"
@@ -159,6 +159,13 @@ class DepartmentItem extends React.Component {
       document.querySelector("#manageDepartmentContainer")
     );
   }
+  deleteDepartment() {
+    if (confirm("Delete " + this.props.program)) {
+      db.collection("department")
+        .doc(this.props.id)
+        .delete();
+    }
+  }
   render() {
     return (
       <React.Fragment>
@@ -166,7 +173,11 @@ class DepartmentItem extends React.Component {
           <div className="row">
             <div className="col-12">{this.props.department}</div>
             <div className="col d-flex flex-row-reverse ">
-              <button type="button" class="btn btn-danger btn-sm">
+              <button
+                type="button"
+                onClick={this.deleteDepartment.bind(this)}
+                class="btn btn-danger btn-sm"
+              >
                 delete
               </button>
               <button
@@ -311,6 +322,7 @@ class Programs extends React.Component {
           <ProgramsItem
             key={object.key}
             id={object.key}
+            department={sup.props.id}
             program={object.program}
             department={object.department}
           />
@@ -381,47 +393,62 @@ class Programs extends React.Component {
 
 class ProgramsItem extends React.Component {
   state = {};
-  updateProgram(){
+  updateProgram() {
     var program = prompt("Update Program Name", this.props.program);
 
     if (program != null) {
-       db.collection("program").doc(this.props.id).update({
-           program:program
-       }).then(function(){
-           alert("Update Successfully");
-       });
+      db.collection("program")
+        .doc(this.props.id)
+        .update({
+          program: program
+        })
+        .then(function() {
+          alert("Update Successfully");
+        });
     }
   }
-  deleteProgram(){
-    if(confirm("Delete "+this.props.program)){
-        db.collection("program").doc(this.props.id).delete();
+  deleteProgram() {
+    if (confirm("Delete " + this.props.program)) {
+      db.collection("program")
+        .doc(this.props.id)
+        .delete();
     }
+  }
+  yearLevel() {
+    ReactDOM.render(
+      <YearLevelContainer
+        key={this.props.id}
+        program={this.props.program}
+        department={this.props.department}
+        id={this.props.id}
+      />,
+      document.querySelector("#manageYearLevel")
+    );
   }
   render() {
     return (
       <React.Fragment>
         <div className="list-group-item ml-2 mt-2 p-2 border-0 shadow-sm list-group-item-action">
           <div className="row">
-            <div className="col-12">
-            {this.props.program}
-            </div>
+            <div className="col-12">{this.props.program}</div>
             <div className="col-auto mt-2">
-            <button
+              <button
                 type="button"
+                onClick={this.yearLevel.bind(this)}
                 className="btn mr-2 btn-success"
               >
                 Manage
               </button>
               <button
                 type="button"
-                onClick = {this.updateProgram.bind(this)}
+                onClick={this.updateProgram.bind(this)}
                 className="btn mr-2 btn-primary"
               >
                 Update
               </button>
               <button
                 type="button"
-                onClick = {this.deleteProgram.bind(this)}
+                onClick={this.deleteProgram.bind(this)}
                 className="btn mr-2 btn-danger"
               >
                 Delete
@@ -434,4 +461,175 @@ class ProgramsItem extends React.Component {
   }
 }
 
-
+class YearLevelContainer extends React.Component {
+  state = {};
+  addYearLevel() {
+    let yearLevel = prompt("Input Year Level", "");
+    let yearLevelId = db.collection("yearlevel").doc().id;
+    let sup = this;
+    if (yearLevel != null) {
+      db.collection("yearlevel")
+        .doc(yearLevelId)
+        .set({
+          key: yearLevelId,
+          program: sup.props.id,
+          department: sup.props.department,
+          yearLevel: yearLevel
+        });
+    }
+  }
+  getYearLevel() {
+    let sup = this;
+    db.collection("yearlevel")
+      .where("program", "==", this.props.id)
+      .orderBy("yearLevel", "asc")
+      .onSnapshot(function(querySnapshot) {
+         let dataObject = [];
+        querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          dataObject.push(doc.data());
+        });
+        var listItem = dataObject.map(object => (
+          <YearLevelItem
+            key={object.key}
+            id={object.key}
+            department={object.department}
+            program={object.program}
+            yearLevel={object.yearLevel}
+          />
+        ));
+        ReactDOM.render(
+          <React.Fragment>{listItem}</React.Fragment>,
+          document.querySelector("#yearLevelList")
+        );
+      });
+  }
+  componentDidMount() {
+    this.getYearLevel();
+  }
+  render() {
+    return (
+      <React.Fragment>
+        <div className="w-100 shadow-sm p-2">
+          <div className="row mb-5">
+            <div className="col">
+              <button
+                type="button"
+                className="btn btn-sm btn-dark"
+                onClick={this.addYearLevel.bind(this)}
+              >
+                Add YearLevel
+              </button>
+            </div>
+          </div>
+          <div className="row">
+            <div className="list-group w-100 p-3" id="yearLevelList" />
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  }
+}
+class YearLevelItem extends React.Component {
+  state = {};
+  addSection() {
+    let section = prompt("Input Section", "");
+    let key = db.collection("section").doc().id;
+    let sup = this;
+    if (section != null) {
+      db.collection("section")
+        .doc(key)
+        .set({
+          key: key,
+          section:section,
+          program: sup.props.program,
+          department: sup.props.department,
+          yearLevel: sup.props.id
+        });
+    }
+  }
+  getSections(){
+    let sup = this;
+    db.collection("section")
+      .where("yearLevel", "==", this.props.id)
+      .orderBy("section", "asc")
+      .onSnapshot(function(querySnapshot) {
+        let dataObject = [];
+        querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          dataObject.push(doc.data());
+        });
+        var listItem = dataObject.map(object => (
+          <SectionItem
+            key={object.key}
+            id={object.key}
+            section = {object.section}
+            department={object.department}
+            program={object.program}
+            yearLevel={object.yearLevel}
+          />
+        ));
+        ReactDOM.render(
+          <React.Fragment>{listItem}</React.Fragment>,
+          document.querySelector("#section"+sup.props.id)
+        );
+      });
+  }
+  componentDidMount(){
+    this.getSections();
+  }
+  render() {
+    return (
+      <React.Fragment>
+        <div className="list-group-item p-3 border-0">
+          <div className="row">
+            <div className="col">
+              <h3>{this.props.yearLevel}</h3>
+            </div>
+            <div className="col">
+              <button type="button"
+              onClick = {this.addSection.bind(this)}
+              className="btn btn-sm btn-dark">
+                Add Section
+              </button>
+            </div>
+          </div>
+          <div className = "row">
+            <div className = "group-list w-100" id = {"section"+this.props.id}></div>
+          </div>
+        </div>
+        <div className="row" />
+      </React.Fragment>
+    );
+  }
+}
+class SectionItem extends React.Component {
+  state = {  }
+  deleteSection(){
+   let deleteSection  =  confirm("Press a button!");
+    if(deleteSection){
+      db.collection("section").doc(this.props.id).delete();
+    }
+  }
+  render() { 
+    return (  
+      <React.Fragment>
+        <div className = "list-group-item border-0">
+          <div className = "row">
+            <div className = "col">
+              {this.props.section}
+            </div>
+            <div className = "col">
+            <button type="button"
+              onClick = {this.deleteSection.bind(this)}
+              className="btn btn-sm btn-danger">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  }
+}
+ 

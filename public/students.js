@@ -16,6 +16,10 @@ class ManageStudents extends React.Component {
             mName={object.mName}
             lName={object.lName}
             accountStatus={object.accoutStatus}
+            departmentKey = {object.departmentKey}
+            programKey = {object.programKey}
+            yearLevelKey = {object.yearLevelKey}
+            sectionKey = {object.sectionKey}
           />
         ));
         ReactDOM.render(
@@ -51,18 +55,55 @@ class ManageStudents extends React.Component {
     }
   }
   class StudentItem extends React.Component {
-    state = {};
+    state = {department:"",program:"",yearLevel:"",section:""};
     
     setStatus(){
       db.collection("studentProfile")
       .doc(this.props.id)
       .update("accoutStatus",this.props.accountStatus == "active"? "pending":"active");
     }
+
+    getStudentDetails(){
+      let sup = this;
+      db.collection("department").doc(this.props.departmentKey).onSnapshot(function(doc) {
+        console.log("Current data: ", doc.data());
+        sup.setState({
+          department:doc.data().department
+        })
+
+      });
+        
+      db.collection("program").doc(this.props.programKey).onSnapshot(function(doc){
+        sup.setState({
+          program:doc.data().program
+        })
+      });
+      db.collection("yearlevel").doc(this.props.yearLevelKey).onSnapshot(function(doc){
+        sup.setState({
+          yearLevel:doc.data().yearLevel
+        })
+      });
+      db.collection("section").doc(this.props.sectionKey).onSnapshot(function(doc){
+        sup.setState({
+          section:doc.data().section
+        })
+      });
+    }
+    componentDidMount(){
+      this.getStudentDetails();
+    }
     render() {
       return (
         <div className="list-group-item mt-1 border-0 bg-light">
           <div className="row">
-            <div className="col">{this.props.fName}</div>
+            <div className="col">
+            <div className  ="row">
+              <h5>{this.props.fName} {this.props.mName} {this.props.lName}</h5>
+            </div>
+            <div className = "row">
+              {this.state.department}> {this.state.program}> {this.state.yearLevel}> {this.props.sectionKey}
+            </div>
+            </div>
             <div className="col"><button onClick ={this.setStatus.bind(this)} type="button" className={"btn text-white btn-"+(this.props.accountStatus=="active"?"success":"warning")}>{this.props.accountStatus}</button></div>
           </div>
         </div>
