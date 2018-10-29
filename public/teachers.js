@@ -36,7 +36,11 @@ class ManageTeachers extends React.Component {
             <div className="list-group-item border-0">
               <div className="row">
                 <div className="col font-weight-bold">Teacher Name</div>
-                <div className="col font-weight-bold">Account Status</div>
+                <div className="col font-weight-bold">
+                  <div className="d-flex flex-row-reverse pr-5">
+                    Account Status
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -58,6 +62,27 @@ class TeacherItem extends React.Component {
         "accountStatus",
         this.props.accountStatus == "active" ? "pending" : "active"
       );
+  }
+  setToActive(){
+    db.collection("teacherProfile")
+      .doc(this.props.id)
+      .update(
+        "accountStatus","active"
+      );
+  }
+  setToPending(){
+    db.collection("teacherProfile")
+    .doc(this.props.id)
+    .update(
+      "accountStatus","pending"
+    );
+  } 
+  setToBlock(){
+    db.collection("teacherProfile")
+    .doc(this.props.id)
+    .update(
+      "accountStatus","block"
+    );
   }
   togleExtend() {
     this.setState({
@@ -99,16 +124,31 @@ class TeacherItem extends React.Component {
         <div className="row" onClick={this.togleExtend.bind(this)}>
           <div className="col">{this.props.teacherName}</div>
           <div className="col">
-            <button
-              onClick={this.setStatus.bind(this)}
-              type="button"
-              className={
-                "btn text-white btn-" +
-                (this.props.accountStatus == "active" ? "success" : "warning")
-              }
-            >
-              {this.props.accountStatus}
-            </button>
+            <div className="d-flex flex-row-reverse pr-5">
+                <div class="dropdown">
+                <button
+                  className={"btn dropdown-toggle  btn-"+(this.props.accountStatus == "active" ? "success" : this.props.accountStatus == "pending" ? "warning" : "dark")}
+                  type="button"
+                  id="dropdownMenuButton"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                 {this.props.accountStatus}
+                </button>
+                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a className="dropdown-item" onClick= {this.setToActive.bind(this)} href="#">
+                    Active
+                  </a>
+                  <a className="dropdown-item" onClick= {this.setToPending.bind(this)} href="#">
+                    Pending
+                  </a>
+                  <a className="dropdown-item" onClick= {this.setToBlock.bind(this)} href="#">
+                    Block
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className={"row " + this.state.extendView}>
