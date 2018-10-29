@@ -84,7 +84,9 @@ class Dashbaord extends React.Component {
             </div>
           </nav>
           <div className="row w-100 bg-white h-100">
-            <div className="col-2  h-100 pt-5">
+            <div className = "col-2">
+            </div>
+            <div className="col-2 position-fixed h-100 pt-5">
               <div
                 className="list-group bg-dark pt-5 h-100"
                 id="list-tab"
@@ -133,6 +135,7 @@ class Dashbaord extends React.Component {
                 </a>
               </div>
             </div>
+         
             <div className="col-10 pt-5" id="mainContainer">
              
             </div>
