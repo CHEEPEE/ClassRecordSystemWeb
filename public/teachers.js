@@ -13,6 +13,7 @@ class ManageTeachers extends React.Component {
           key={object.userId}
           id={object.userId}
           teacherName={object.teacherName}
+          teacherId= {object.teacherId}
           accountStatus={object.accountStatus}
         />
       ));
@@ -54,7 +55,7 @@ class ManageTeachers extends React.Component {
 }
 
 class TeacherItem extends React.Component {
-  state = { extendView: "d-none" };
+  state = { extendView: "d-none",profile:"" };
   setStatus() {
     db.collection("teacherProfile")
       .doc(this.props.id)
@@ -83,6 +84,17 @@ class TeacherItem extends React.Component {
     .update(
       "accountStatus","block"
     );
+  }
+
+  getTeacherUserDetails(){
+    let sup = this
+    db.collection("users")
+    .doc(this.props.id)
+    .onSnapshot(function(doc){
+      sup.setState({
+        profile:doc.data()
+      })
+    })
   }
   togleExtend() {
     this.setState({
@@ -117,12 +129,26 @@ class TeacherItem extends React.Component {
   }
   componentDidMount() {
     this.getSubjectList();
+    this.getTeacherUserDetails();
   }
   render() {
     return (
       <div className="list-group-item mt-1 border-0 bg-light">
         <div className="row" onClick={this.togleExtend.bind(this)}>
-          <div className="col">{this.props.teacherName}</div>
+          <div className="col">
+          
+         
+        
+          <div className = "row font-weight-bold">
+          {this.props.teacherName}
+          </div>
+          <div className = "row">
+          <small className = "text-primary">{this.props.teacherId}</small>
+          </div>
+          <div className = "row">
+          {this.state.profile.email}
+          </div>
+          </div>
           <div className="col">
             <div className="d-flex flex-row-reverse pr-5">
                 <div class="dropdown">
