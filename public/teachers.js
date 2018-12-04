@@ -121,6 +121,14 @@ class InputInstructorModalContent extends React.Component {
           <label for="exampleInputEmail1">Email address</label>
           <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"/>
         </div>
+        <div className="form-group">
+          <label for="exampleInputEmail1">Instructor ID</label>
+          <input type="text" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Instructor ID"/>
+        </div>
+        <div className="form-group">
+          <label for="exampleInputEmail1">Instructor Name</label>
+          <input type="text" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Instructor Name"/>
+        </div>
       </React.Fragment>
      );
   }
