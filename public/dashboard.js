@@ -20,7 +20,7 @@ class Dashbaord extends React.Component {
       
     }
     renderDepartment(){
-      const mainContainer = document.querySelector("#mfiainContainer");
+      const mainContainer = document.querySelector("#mainContainer");
       ReactDOM.render(
           <ManageDepartment/>,mainContainer
       )

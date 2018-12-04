@@ -13,7 +13,7 @@ class ManageTeachers extends React.Component {
           key={object.userId}
           id={object.userId}
           teacherName={object.teacherName}
-          teacherId= {object.teacherId}
+          teacherId={object.teacherId}
           accountStatus={object.accountStatus}
         />
       ));
@@ -33,6 +33,11 @@ class ManageTeachers extends React.Component {
           <h1>Manage Teachers</h1>
         </div>
         <div className="row">
+          <button type="button" className="btn btn-dark" data-toggle="modal" data-target="#addInstructorModal">
+            Register Instructor
+          </button>
+        </div>
+        <div className="row">
           <div className="group-list w-100">
             <div className="list-group-item border-0">
               <div className="row">
@@ -49,13 +54,80 @@ class ManageTeachers extends React.Component {
         <div className="row">
           <div className="group-list w-100" id="teacherListContainer" />
         </div>
+        {/* add Instructor modal herer */}
+        <Modal id = {"addInstructorModal"} content = {<InputInstructorModalContent/>} modalTitle = {"Add Instructor"}/>
       </React.Fragment>
     );
   }
 }
 
+class Modal extends React.Component {
+  state = { data:{} }
+  render() { 
+    return ( 
+      <div
+      className="modal fade"
+      id={this.props.id}
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div className="modal-dialog" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title" id="exampleModalLabel">
+             {this.props.modalTitle}
+            </h5>
+            <button
+              type="button"
+              className="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div className="modal-body">
+            {/* modal Content */}
+            {this.props.content}
+          </div>
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" className="btn btn-primary">
+              Save changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+     );
+  }
+}
+
+class InputInstructorModalContent extends React.Component {
+  state = {  }
+  render() { 
+    return ( 
+      <React.Fragment>
+         <div className="form-group">
+          <label for="exampleInputEmail1">Email address</label>
+          <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"/>
+        </div>
+      </React.Fragment>
+     );
+  }
+}
+
 class TeacherItem extends React.Component {
-  state = { extendView: "d-none",profile:"" };
+  state = { extendView: "d-none", profile: "" };
   setStatus() {
     db.collection("teacherProfile")
       .doc(this.props.id)
@@ -64,37 +136,31 @@ class TeacherItem extends React.Component {
         this.props.accountStatus == "active" ? "pending" : "active"
       );
   }
-  setToActive(){
+  setToActive() {
     db.collection("teacherProfile")
       .doc(this.props.id)
-      .update(
-        "accountStatus","active"
-      );
+      .update("accountStatus", "active");
   }
-  setToPending(){
+  setToPending() {
     db.collection("teacherProfile")
-    .doc(this.props.id)
-    .update(
-      "accountStatus","pending"
-    );
-  } 
-  setToBlock(){
+      .doc(this.props.id)
+      .update("accountStatus", "pending");
+  }
+  setToBlock() {
     db.collection("teacherProfile")
-    .doc(this.props.id)
-    .update(
-      "accountStatus","block"
-    );
+      .doc(this.props.id)
+      .update("accountStatus", "block");
   }
 
-  getTeacherUserDetails(){
-    let sup = this
+  getTeacherUserDetails() {
+    let sup = this;
     db.collection("users")
-    .doc(this.props.id)
-    .onSnapshot(function(doc){
-      sup.setState({
-        profile:doc.data()
-      })
-    })
+      .doc(this.props.id)
+      .onSnapshot(function(doc) {
+        sup.setState({
+          profile: doc.data()
+        });
+      });
   }
   togleExtend() {
     this.setState({
@@ -110,7 +176,7 @@ class TeacherItem extends React.Component {
         querySnapshot.forEach(function(doc) {
           // doc.data() is never undefined for query doc snapshots
           object.push(doc.data());
-          console.log(doc.data());
+          // console.log(doc.data());
         });
         var listItem = object.map(object => (
           <TeacherSubjectItem
@@ -136,40 +202,55 @@ class TeacherItem extends React.Component {
       <div className="list-group-item mt-1 border-0 bg-light">
         <div className="row" onClick={this.togleExtend.bind(this)}>
           <div className="col">
-          
-         
-        
-          <div className = "row font-weight-bold">
-          {this.props.teacherName}
-          </div>
-          <div className = "row">
-          <small className = "text-primary">{this.props.teacherId}</small>
-          </div>
-          <div className = "row">
-          {this.state.profile.email}
-          </div>
+            <div className="row font-weight-bold">{this.props.teacherName}</div>
+            <div className="row">
+              <small className="text-primary">{this.props.teacherId}</small>
+            </div>
+            <div className="row">{this.state.profile.email}</div>
           </div>
           <div className="col">
             <div className="d-flex flex-row-reverse pr-5">
-                <div class="dropdown">
+              <div class="dropdown">
                 <button
-                  className={"btn dropdown-toggle  btn-"+(this.props.accountStatus == "active" ? "success" : this.props.accountStatus == "pending" ? "warning" : "dark")}
+                  className={
+                    "btn dropdown-toggle  btn-" +
+                    (this.props.accountStatus == "active"
+                      ? "success"
+                      : this.props.accountStatus == "pending"
+                      ? "warning"
+                      : "dark")
+                  }
                   type="button"
                   id="dropdownMenuButton"
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                 {this.props.accountStatus}
+                  {this.props.accountStatus}
                 </button>
-                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a className="dropdown-item" onClick= {this.setToActive.bind(this)} href="#">
+                <div
+                  className="dropdown-menu"
+                  aria-labelledby="dropdownMenuButton"
+                >
+                  <a
+                    className="dropdown-item"
+                    onClick={this.setToActive.bind(this)}
+                    href="#"
+                  >
                     Active
                   </a>
-                  <a className="dropdown-item" onClick= {this.setToPending.bind(this)} href="#">
+                  <a
+                    className="dropdown-item"
+                    onClick={this.setToPending.bind(this)}
+                    href="#"
+                  >
                     Pending
                   </a>
-                  <a className="dropdown-item" onClick= {this.setToBlock.bind(this)} href="#">
+                  <a
+                    className="dropdown-item"
+                    onClick={this.setToBlock.bind(this)}
+                    href="#"
+                  >
                     Block
                   </a>
                 </div>
@@ -219,13 +300,13 @@ class TeacherSubjectItem extends React.Component {
   getstudentList() {
     let sup = this;
     db.collection("subjectStudentList")
-      .where("classKey", "==", this.props.classKey)
+      .where("classKey", "==", sup.props.classKey)
       .onSnapshot(function(querySnapshot) {
         let object = [];
         querySnapshot.forEach(function(doc) {
           // doc.data() is never undefined for query doc snapshots
           object.push(doc.data());
-          console.log(doc.data());
+          // console.log(doc.data());
         });
         var listItem = object.map(object => (
           <StudentListOnTeacherSubjectItem
@@ -258,6 +339,7 @@ class TeacherSubjectItem extends React.Component {
             </div>
           </div>
         </div>
+        {/* registerTeacherModal */}
         <div
           className="modal fade"
           id={"viewList" + this.props.classKey}
