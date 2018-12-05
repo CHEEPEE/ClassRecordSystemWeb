@@ -21,17 +21,27 @@ firebase.auth().onAuthStateChanged(function(user) {
   function login() {
     var userEmail = document.getElementById("email").value;
     var userPass = document.getElementById("password").value;
-  
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(userEmail, userPass)
-      .catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        window.alert("Error : " + errorMessage);
-        // ...
-      });
+    firebase.firestore().collection('users').where("email","==",userEmail).get().then((querySnapshot)=>{
+      querySnapshot.forEach((doc)=>{
+        if(doc.data().userType == "admin"){
+          firebase
+          .auth()
+          .signInWithEmailAndPassword(userEmail, userPass)
+          .catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            window.alert("Error : " + errorMessage);
+            // ...
+          });
+          
+        }else{
+          alert("Not Allowed")
+        }
+      })
+     
+    })
+   
   }
   
   function logout() {
