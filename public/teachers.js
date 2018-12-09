@@ -77,6 +77,14 @@ class ManageTeachers extends React.Component {
   }
 }
 
+function alertHandler(alert,alertType) {
+  return (
+    <div class={`alert alert-${alertType?"primary":"danger"}`} role="alert">
+      {alert}
+    </div>
+  );
+}
+
 class Modal extends React.Component {
   state = {
     data: { email: "test", instructorId: "11", instructorName: "name" }
@@ -121,7 +129,25 @@ class InputInstructorModalContent extends React.Component {
     email: "",
     userSchoolId: "",
     userName: "",
-    userType: "teacher"
+    userType: "teacher",
+    alert: ""
+  };
+
+  isUserIdAvailable = (callback = () => {}) => {
+    let sup = this;
+    let instructorIdInput = document.querySelector("#instructorIdInput").value
+
+    db.collection("users")
+      .where("userSchoolId", "==", instructorIdInput)
+      .onSnapshot
+      (querySnapshot => {
+        querySnapshot.forEach(data=>{
+          console.log(data)
+            sup.setState({
+              alert: "ID Taken"
+            });
+        })
+      })
   };
   saveInStructor = () => {
     let sup = this;
@@ -159,13 +185,14 @@ class InputInstructorModalContent extends React.Component {
             <input
               type="text"
               className="form-control"
-              id="exampleInputEmail1"
+              id="instructorIdInput"
               aria-describedby="emailHelp"
               placeholder="Enter Instructor ID"
               onChange={text => {
                 this.setState({
                   userSchoolId: text.target.value
                 });
+                this.isUserIdAvailable();
               }}
               defaultValue={this.state.teacherId}
             />
@@ -187,6 +214,7 @@ class InputInstructorModalContent extends React.Component {
             />
           </div>
         </div>
+        {this.state.alert.trim() == "" ? "" : alertHandler(this.state.alert,false)}
         <div className="modal-footer">
           <button
             type="button"
@@ -197,7 +225,7 @@ class InputInstructorModalContent extends React.Component {
           </button>
           <button
             type="button"
-            onClick={() => this.saveInStructor()}
+            onClick={() => this.isUserIdAvailable(this.saveInStructor)}
             className="btn btn-primary"
           >
             Save changes
@@ -291,18 +319,18 @@ class TeacherItem extends React.Component {
         );
       });
   }
-  copyToClipboard =()=>{
+  copyToClipboard = () => {
     let copyText = document.getElementById("tempPassword");
 
     /* Select the text field */
     copyText.select();
-  
+
     /* Copy the text inside the text field */
     document.execCommand("copy");
-  
+
     /* Alert the copied text */
     alert("Copied the Password: " + copyText.value);
-  }
+  };
   componentDidMount() {
     this.getSubjectList();
     this.getTeacherUserDetails();
@@ -361,12 +389,19 @@ class TeacherItem extends React.Component {
                 >
                   {this.state.showPassword ? "visibility" : "visibility_off"}
                 </i>
-                {this.state.showPassword? <i class="ml-2 small-icn material-icons text-muted" onClick = {()=>{
-                  this.setState({ showPassword: !this.state.showPassword });
-                  this.copyToClipboard()
-                }}>
-                  file_copy
-                </i>:""}
+                {this.state.showPassword ? (
+                  <i
+                    class="ml-2 small-icn material-icons text-muted"
+                    onClick={() => {
+                      this.setState({ showPassword: !this.state.showPassword });
+                      this.copyToClipboard();
+                    }}
+                  >
+                    file_copy
+                  </i>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </div>

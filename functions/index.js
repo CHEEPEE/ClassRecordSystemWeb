@@ -26,6 +26,17 @@ exports.createUser = functions.firestore
     });
   });
 
+  exports.deleteUserRecord = functions.auth.user().onDelete((user) => {
+    // ...
+    return firestore
+    .collection("tempCreateUsers")
+    .doc(user.email).delete().then(()=>{
+      firestore
+      .collection("users")
+      .doc(user.uid).delete();
+    })
+  });
+
 exports.afterCreateUser = functions.auth.user().onCreate(user => {
   // ...
   var userId = user.uid;
@@ -36,6 +47,7 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
     .collection("tempCreateUsers")
     .doc(email)
     .onSnapshot(querySnapshot => {
+      let obj = querySnapshot.data()
       firestore
         .collection("users")
         .doc(userId)
@@ -48,10 +60,6 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
           userImage:
             "https://firebasestorage.googleapis.com/v0/b/classrecordsystem-f6067.appspot.com/o/assets%2Favatar-1577909_960_720.png?alt=media&token=ff2ede2c-d86a-481e-87e5-384011a368ca"
         })
-     
-         
-
-
       if(querySnapshot.data().userType == "teacher"){
           console.log({
               accountStatus:"active",
@@ -68,21 +76,28 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
             teacherId: querySnapshot.data().userSchoolId,
             teacherName: querySnapshot.data().userName
           });
+      }else if (querySnapshot.data().userType == "student"){
+        firestore.collection("studentProfile").doc(userId).set({  
+          email:email,
+          userId:userId,
+          studentId:querySnapshot.data().studentId,
+          fName:obj.fName,
+          mName:obj.mName,
+          lName:obj.lName,
+          programKey:obj.programKey,
+          sectionKey:obj.sectionKey,
+          studentId:obj.studentId,
+          yearLevelKey:obj.yearLevelKey
+        })
+        let studentClassKeyId =  firestore.collection("studentClasses").doc().id
+        firestore.collection("studentClasses").doc(studentClassKeyId).set({
+          classCode:obj.classCode,
+          key:studentClassKeyId,
+          status:"active",
+          studentId:obj.studentId,
+          studentUserId:userId
+        })
       }
     });
 });
 
-// exports.createUser = functions.firestore
-//   .document("users/{userEmail}")
-//   .onWrite((change, context) => {
-//     // ... Your code here
-//     return firestore
-//       .collection("teacherProfile")
-//       .doc(userId)
-//       .set({
-//         accountStatus: "block",
-//         userId: change.after.data().userId,
-//         teacherId: change.after.data().userSchoolId,
-//         teacherName: change.after.data().userName
-//       });
-//   });
