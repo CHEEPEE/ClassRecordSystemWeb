@@ -141,16 +141,23 @@ class InputInstructorModalContent extends React.Component {
       .where("userSchoolId", "==", instructorIdInput)
       .onSnapshot
       (querySnapshot => {
+        sup.setState({
+          alert:""
+        })
         querySnapshot.forEach(data=>{
           console.log(data)
             sup.setState({
               alert: "ID Taken"
             });
         })
+        if(sup.state.alert == ""){
+          callback()
+        }
       })
   };
   saveInStructor = () => {
     let sup = this;
+    console.log("saving Instructor")
     let timeStamp = db.collection("tempCreateUsers").doc().id;
     db.collection("tempCreateUsers")
       .doc(sup.state.email)
@@ -371,7 +378,7 @@ class TeacherItem extends React.Component {
                   defaultValue={this.state.password}
                   class="form-control form-control-sm border-0 font-weight-bold text-muted"
                   id="tempPassword"
-                  placeholder="Enter email"
+                  placeholder="********************"
                 />
                 {/* <small className = "font-weight-bold">
                   {" "}

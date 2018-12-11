@@ -87,13 +87,14 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
           programKey:obj.programKey,
           sectionKey:obj.sectionKey,
           studentId:obj.studentId,
-          yearLevelKey:obj.yearLevelKey
+          yearLevelKey:obj.yearLevelKey,
+          accountStatus:"active"
         })
         let studentClassKeyId =  firestore.collection("studentClasses").doc().id
         firestore.collection("studentClasses").doc(studentClassKeyId).set({
           classCode:obj.classCode,
           key:studentClassKeyId,
-          status:"active",
+          status:"approved",
           studentId:obj.studentId,
           studentUserId:userId
         })
