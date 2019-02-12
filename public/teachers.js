@@ -77,9 +77,9 @@ class ManageTeachers extends React.Component {
   }
 }
 
-function alertHandler(alert,alertType) {
+function alertHandler(alert, alertType) {
   return (
-    <div class={`alert alert-${alertType?"primary":"danger"}`} role="alert">
+    <div class={`alert m-1 alert-${alertType ? "primary" : "danger"}`} role="alert">
       {alert}
     </div>
   );
@@ -130,34 +130,40 @@ class InputInstructorModalContent extends React.Component {
     userSchoolId: "",
     userName: "",
     userType: "teacher",
-    alert: ""
+    alert: "Please Fill Up All Fields"
   };
 
   isUserIdAvailable = (callback = () => {}) => {
     let sup = this;
-    let instructorIdInput = document.querySelector("#instructorIdInput").value
-
+    let instructorIdInput = document.querySelector("#instructorIdInput").value;
     db.collection("users")
       .where("userSchoolId", "==", instructorIdInput)
-      .onSnapshot
-      (querySnapshot => {
-        sup.setState({
-          alert:""
-        })
-        querySnapshot.forEach(data=>{
-          console.log(data)
-            sup.setState({
-              alert: "ID Taken"
-            });
-        })
-        if(sup.state.alert == ""){
-          callback()
-        }
-      })
+      .onSnapshot(querySnapshot => {
+       sup.setState({
+         alert:querySnapshot.empty?"":"ID Taken"
+       })
+      });
   };
+
+  isEmailAvailable = (callback = () => {}) => {
+    let sup = this;
+    let instructorEmail = document.querySelector("#instructorEmail").value;
+
+    db.collection("users")
+      .where("email", "==", instructorEmail)
+      .onSnapshot(querySnapshot => {
+        
+        sup.setState({
+          alert:querySnapshot.empty?"":"Email Taken"
+        })
+
+      });
+  };
+  
   saveInStructor = () => {
     let sup = this;
-    console.log("saving Instructor")
+   if(this.state.alert == "" && this.state.userName != ""){
+    console.log("saving Instructor");
     let timeStamp = db.collection("tempCreateUsers").doc().id;
     db.collection("tempCreateUsers")
       .doc(sup.state.email)
@@ -165,6 +171,7 @@ class InputInstructorModalContent extends React.Component {
       .then(() => {
         $("#" + this.props.id).modal("hide");
       });
+   }
   };
 
   render() {
@@ -176,13 +183,14 @@ class InputInstructorModalContent extends React.Component {
             <input
               type="email"
               className="form-control"
-              id="exampleInputEmail1"
+              id="instructorEmail"
               aria-describedby="emailHelp"
               placeholder="Enter email"
               onChange={text => {
                 this.setState({
                   email: text.target.value
                 });
+                this.isEmailAvailable()
               }}
               defaultValue={this.state.email}
             />
@@ -221,7 +229,9 @@ class InputInstructorModalContent extends React.Component {
             />
           </div>
         </div>
-        {this.state.alert.trim() == "" ? "" : alertHandler(this.state.alert,false)}
+        {this.state.alert.trim() == ""
+          ? ""
+          : alertHandler(this.state.alert, false)}
         <div className="modal-footer">
           <button
             type="button"
@@ -365,7 +375,10 @@ class TeacherItem extends React.Component {
             </div>
           </div>
           <div className="col">
-            <div className="row font-weight-bold">{this.props.teacherName}</div>
+            <div className="row font-weight-bold">
+              {this.props.teacherName}{" "}
+              {/* <i class="ml-3 material-icons text-muted">edit</i> */}
+            </div>
           </div>
           <div className="col">
             <div className="row">{this.state.profile.email}</div>
@@ -538,7 +551,7 @@ class TeacherSubjectItem extends React.Component {
             <div
               data-toggle="modal"
               data-target={"#viewList" + this.props.classKey}
-              className="btn btn-dark"
+              className="btn btn-dark d-none"
             >
               List
             </div>

@@ -58,7 +58,7 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
           userSchoolId: querySnapshot.data().userSchoolId,
           userType: querySnapshot.data().userType,
           userImage:
-            "https://firebasestorage.googleapis.com/v0/b/classrecordsystem-f6067.appspot.com/o/assets%2Favatar-1577909_960_720.png?alt=media&token=ff2ede2c-d86a-481e-87e5-384011a368ca"
+            "https://firebasestorage.googleapis.com/v0/b/classrecordsystem-f6067.appspot.com/o/assets%2Fser1.png?alt=media&token=f6b84fc2-2ecd-4cef-981f-ac427f2aeeb8"
         })
       if(querySnapshot.data().userType == "teacher"){
           console.log({
@@ -88,7 +88,8 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
           sectionKey:obj.sectionKey,
           studentId:obj.studentId,
           yearLevelKey:obj.yearLevelKey,
-          accountStatus:"active"
+          accountStatus:"active",
+          phoneNumber:obj.phoneNumber!=null?obj.phoneNumber:"+639164137221"
         })
         let studentClassKeyId =  firestore.collection("studentClasses").doc().id
         firestore.collection("studentClasses").doc(studentClassKeyId).set({

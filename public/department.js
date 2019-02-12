@@ -548,6 +548,17 @@ class YearLevelItem extends React.Component {
         });
     }
   }
+  removeYearLevel() {
+    let context = this
+    if(confirm("Remove Yearl Level?")){
+      console.log(context.props.id);
+      db.collection("yearlevel").doc(context.props.id).delete().then(()=>{
+        console.log("Success");
+      }).catch(function(error) {
+        console.error("Error removing document: ", error);
+    });
+    }
+  }
   getSections(){
     let sup = this;
     db.collection("section")
@@ -575,6 +586,7 @@ class YearLevelItem extends React.Component {
         );
       });
   }
+
   componentDidMount(){
     this.getSections();
   }
@@ -591,6 +603,13 @@ class YearLevelItem extends React.Component {
               onClick = {this.addSection.bind(this)}
               className="btn btn-sm btn-dark">
                 Add Section
+              </button>
+            </div>
+            <div className = "col">
+            <button type="button"
+              onClick = {this.removeYearLevel.bind(this)}
+              className="btn btn-sm btn-danger">
+               Remove
               </button>
             </div>
           </div>

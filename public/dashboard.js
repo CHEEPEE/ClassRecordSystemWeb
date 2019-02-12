@@ -93,13 +93,13 @@ class Dashbaord extends React.Component {
                 role="tablist"
               >
                 <h3 className="p-2 text-white">Contol Panel</h3>
-                <a
+                {/* <a
                   className="list-group-item border-0 text-muted bg-transparent rounded-0 list-group-item-action"
                   data-toggle="list"
                   role="tab"
                 >
                   Dashboard
-                </a>
+                </a> */}
                 <a
                   className="list-group-item bg-transparent text-muted border-0 rounded-0 list-group-item-action active"
                   data-toggle="list"
@@ -117,22 +117,22 @@ class Dashbaord extends React.Component {
                 >
                   Teacher Management
                 </a>
-                <a
+                {/* <a
                   className="list-group-item bg-transparent text-muted border-0 rounded-0 list-group-item-action"
                   data-toggle="list"
                   role="tab"
                   onClick ={this.renderStudents.bind(this)}
                 >
                   Student Management
-                </a>
-                <a
+                </a> */}
+                {/* <a
                   className="list-group-item bg-transparent text-muted border-0 rounded-0 list-group-item-action"
                   data-toggle="list"
                   role="tab"
                  
                 >
                 Management
-                </a>
+                </a> */}
               </div>
             </div>
          
