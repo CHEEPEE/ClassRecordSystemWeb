@@ -92,7 +92,7 @@ class Dashbaord extends React.Component {
                 id="list-tab"
                 role="tablist"
               >
-                <h3 className="p-2 text-white">Contol Panel</h3>
+                <h3 className="p-2 text-white">CONTROL PANEL</h3>
                 {/* <a
                   className="list-group-item border-0 text-muted bg-transparent rounded-0 list-group-item-action"
                   data-toggle="list"
@@ -107,7 +107,7 @@ class Dashbaord extends React.Component {
                   onClick = {this.renderDepartment.bind(this)}
                  
                 >
-                  Department Management
+                  MANAGE COLLEGE
                 </a>
                 <a
                   className="list-group-item bg-transparent text-muted border-0 rounded-0 list-group-item-action"
@@ -115,7 +115,7 @@ class Dashbaord extends React.Component {
                   role="tab"
                   onClick = {this.renderTeachers.bind(this)}
                 >
-                  Teacher Management
+                  MANAGE FACULTY
                 </a>
                 {/* <a
                   className="list-group-item bg-transparent text-muted border-0 rounded-0 list-group-item-action"

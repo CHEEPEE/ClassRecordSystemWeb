@@ -39,9 +39,13 @@ class ManageTeachers extends React.Component {
             data-toggle="modal"
             data-target="#addInstructorModal"
           >
-            Register Instructor
+            Click to Register Instructor
           </button>
         </div>
+        <div className="row mt-2 text-muted font-weight-bold">
+          <he>LIST OF REGISTERED INSTRUCTORS</he>
+        </div>
+
         <div className="row">
           <div className="group-list w-100">
             <div className="list-group-item border-0">
@@ -79,7 +83,10 @@ class ManageTeachers extends React.Component {
 
 function alertHandler(alert, alertType) {
   return (
-    <div class={`alert m-1 alert-${alertType ? "primary" : "danger"}`} role="alert">
+    <div
+      class={`alert m-1 alert-${alertType ? "primary" : "danger"}`}
+      role="alert"
+    >
       {alert}
     </div>
   );
@@ -139,9 +146,9 @@ class InputInstructorModalContent extends React.Component {
     db.collection("users")
       .where("userSchoolId", "==", instructorIdInput)
       .onSnapshot(querySnapshot => {
-       sup.setState({
-         alert:querySnapshot.empty?"":"ID Taken"
-       })
+        sup.setState({
+          alert: querySnapshot.empty ? "" : "ID Taken"
+        });
       });
   };
 
@@ -152,26 +159,24 @@ class InputInstructorModalContent extends React.Component {
     db.collection("users")
       .where("email", "==", instructorEmail)
       .onSnapshot(querySnapshot => {
-        
         sup.setState({
-          alert:querySnapshot.empty?"":"Email Taken"
-        })
-
+          alert: querySnapshot.empty ? "" : "Email Taken"
+        });
       });
   };
-  
+
   saveInStructor = () => {
     let sup = this;
-   if(this.state.alert == "" && this.state.userName != ""){
-    console.log("saving Instructor");
-    let timeStamp = db.collection("tempCreateUsers").doc().id;
-    db.collection("tempCreateUsers")
-      .doc(sup.state.email)
-      .set({ ...this.state, password: timeStamp })
-      .then(() => {
-        $("#" + this.props.id).modal("hide");
-      });
-   }
+    if (this.state.alert == "" && this.state.userName != "") {
+      console.log("saving Instructor");
+      let timeStamp = db.collection("tempCreateUsers").doc().id;
+      db.collection("tempCreateUsers")
+        .doc(sup.state.email)
+        .set({ ...this.state, password: timeStamp })
+        .then(() => {
+          $("#" + this.props.id).modal("hide");
+        });
+    }
   };
 
   render() {
@@ -190,7 +195,7 @@ class InputInstructorModalContent extends React.Component {
                 this.setState({
                   email: text.target.value
                 });
-                this.isEmailAvailable()
+                this.isEmailAvailable();
               }}
               defaultValue={this.state.email}
             />
@@ -480,7 +485,7 @@ class TeacherItem extends React.Component {
           <div className="col-12">
             <div className="row">
               <div className="col">
-                <h5>Teacher's subjects</h5>
+                <h5>SUBJECTS HANDLED</h5>
               </div>
             </div>
             <div className="row">
@@ -517,8 +522,8 @@ class TeacherSubjectItem extends React.Component {
   }
   getstudentList() {
     let sup = this;
-    db.collection("subjectStudentList")
-      .where("classKey", "==", sup.props.classKey)
+    db.collection("studentClasses")
+      .where("classCode", "==", sup.props.classKey)
       .onSnapshot(function(querySnapshot) {
         let object = [];
         querySnapshot.forEach(function(doc) {
@@ -529,8 +534,9 @@ class TeacherSubjectItem extends React.Component {
         var listItem = object.map(object => (
           <StudentListOnTeacherSubjectItem
             key={object.key}
-            name={object.studentName}
-            classKey={object.classKey}
+            name={object.studentId}
+            classKey={object.classCode}
+            userId={object.studentUserId}
           />
         ));
         ReactDOM.render(
@@ -551,7 +557,7 @@ class TeacherSubjectItem extends React.Component {
             <div
               data-toggle="modal"
               data-target={"#viewList" + this.props.classKey}
-              className="btn btn-dark d-none"
+              className="btn btn-dark"
             >
               List
             </div>
@@ -573,7 +579,7 @@ class TeacherSubjectItem extends React.Component {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalLabel">
-                  {this.props.name} student List
+                  {this.props.name} Students
                 </h5>
                 <button
                   type="button"
@@ -585,8 +591,8 @@ class TeacherSubjectItem extends React.Component {
                 </button>
               </div>
               <div className="modal-body">
-                <div className="row">
-                  <div className="col-9">
+                <div className="row d-none">
+                  <div className="col-9 ">
                     <div class="form-group">
                       <input
                         type="email"
@@ -606,6 +612,18 @@ class TeacherSubjectItem extends React.Component {
                     </div>
                   </div>
                 </div>
+                <div className="list-group-item border-0">
+                  <div className="row">
+                    <div className="col">
+                      <div className="row">
+                        <div className="col">Student ID</div>
+                        <div className="col">Name</div>
+                        <div className="col">Email</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="row">
                   <div
                     className="group-list w-100"
@@ -630,16 +648,39 @@ class TeacherSubjectItem extends React.Component {
   }
 }
 class StudentListOnTeacherSubjectItem extends React.Component {
-  state = {};
+  state = { studentName: "..." };
+  getStudentName = () => {
+    let sup = this;
+    db.collection("studentProfile")
+      .doc(sup.props.userId)
+      .onSnapshot(function(doc) {
+        sup.setState({
+          ...doc.data(),
+          studentName: `${doc.data().fName} ${doc.data().mName} ${
+            doc.data().lName
+          }`
+        });
+        //  console.log( doc.data());
+
+        // this.getPassword();
+      });
+  };
+  componentDidMount() {
+    this.getStudentName();
+  }
   render() {
     return (
       <div className="list-group-item mt-1 border-0 bg-light">
         <div className="row">
           <div className="col ml-3 text-info">
-            <h5>{this.props.name}/</h5>
+            <div className="row">
+              <div className="col">{this.state.studentId}</div>
+              <div className="col">{this.state.studentName}</div>
+              <div className="col">{this.state.email}</div>
+            </div>
           </div>
           <div className="col-auto">
-            <button type="button" class="btn btn-danger">
+            <button type="button" class="btn btn-danger d-none">
               Remove List
             </button>
           </div>
