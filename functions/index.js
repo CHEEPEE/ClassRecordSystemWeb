@@ -26,16 +26,21 @@ exports.createUser = functions.firestore
     });
   });
 
-  exports.deleteUserRecord = functions.auth.user().onDelete((user) => {
-    // ...
-    return firestore
+
+
+exports.deleteUserRecord = functions.auth.user().onDelete(user => {
+  // ...
+  return firestore
     .collection("tempCreateUsers")
-    .doc(user.email).delete().then(()=>{
+    .doc(user.email)
+    .delete()
+    .then(() => {
       firestore
-      .collection("users")
-      .doc(user.uid).delete();
-    })
-  });
+        .collection("users")
+        .doc(user.uid)
+        .delete();
+    });
+});
 
 exports.afterCreateUser = functions.auth.user().onCreate(user => {
   // ...
@@ -47,7 +52,7 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
     .collection("tempCreateUsers")
     .doc(email)
     .onSnapshot(querySnapshot => {
-      let obj = querySnapshot.data()
+      let obj = querySnapshot.data();
       firestore
         .collection("users")
         .doc(userId)
@@ -59,15 +64,15 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
           userType: querySnapshot.data().userType,
           userImage:
             "https://firebasestorage.googleapis.com/v0/b/classrecordsystem-f6067.appspot.com/o/assets%2Fser1.png?alt=media&token=f6b84fc2-2ecd-4cef-981f-ac427f2aeeb8"
-        })
-      if(querySnapshot.data().userType == "teacher"){
-          console.log({
-              accountStatus:"active",
-              userId:userId,
-              teacherId:querySnapshot.data().userSchoolId,
-              teacherName:querySnapshot.data().userName,
-          })
-          firestore
+        });
+      if (querySnapshot.data().userType == "teacher") {
+        console.log({
+          accountStatus: "active",
+          userId: userId,
+          teacherId: querySnapshot.data().userSchoolId,
+          teacherName: querySnapshot.data().userName
+        });
+        firestore
           .collection("teacherProfile")
           .doc(userId)
           .set({
@@ -76,30 +81,61 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
             teacherId: querySnapshot.data().userSchoolId,
             teacherName: querySnapshot.data().userName
           });
-      }else if (querySnapshot.data().userType == "student"){
-        firestore.collection("studentProfile").doc(userId).set({  
-          email:email,
-          userId:userId,
-          studentId:querySnapshot.data().studentId,
-          fName:obj.fName,
-          mName:obj.mName,
-          lName:obj.lName,
-          programKey:obj.programKey,
-          sectionKey:obj.sectionKey,
-          studentId:obj.studentId,
-          yearLevelKey:obj.yearLevelKey,
-          accountStatus:"active",
-          phoneNumber:obj.phoneNumber!=null?obj.phoneNumber:"+639164137221"
-        })
-        let studentClassKeyId =  firestore.collection("studentClasses").doc().id
-        firestore.collection("studentClasses").doc(studentClassKeyId).set({
-          classCode:obj.classCode,
-          key:studentClassKeyId,
-          status:"approved",
-          studentId:obj.studentId,
-          studentUserId:userId
-        })
+      } else if (querySnapshot.data().userType == "student") {
+        firestore
+          .collection("studentProfile")
+          .doc(userId)
+          .set({
+            email: email,
+            userId: userId,
+            studentId: querySnapshot.data().studentId,
+            fName: obj.fName,
+            mName: obj.mName,
+            lName: obj.lName,
+            programKey: obj.programKey,
+            sectionKey: obj.sectionKey,
+            studentId: obj.studentId,
+            yearLevelKey: obj.yearLevelKey,
+            accountStatus: "active",
+            phoneNumber:
+              obj.phoneNumber != null ? obj.phoneNumber : "+639164137221"
+          });
+        let studentClassKeyId = firestore.collection("studentClasses").doc().id;
+        firestore
+          .collection("studentClasses")
+          .doc(studentClassKeyId)
+          .set({
+            classCode: obj.classCode,
+            key: studentClassKeyId,
+            status: "approved",
+            studentId: obj.studentId,
+            studentUserId: userId
+          });
       }
     });
 });
 
+
+exports.createStudentProfileClasses = functions.firestore
+  .document("studentClasses")
+  .onCreate((change, context) => {
+    // ... Your code here
+    console.log(change.after.data());
+
+    return firestore
+      .collection("studentProfile")
+      .doc(change.after.data().studentUserId)
+      .onSnapshot(studentData => {
+        // console.log(studentData.data());
+        firestore
+          .collection("studentClasses")
+          .doc(change.after.data().key)
+          //   .doc("eGGn2yXIxd1YTRGxJ3uz")
+          .update(...studentData.data())
+          .then(function() {
+            console.log(
+              "Document successfully updated! + " + change.after.data().key
+            );
+          });
+      });
+  });

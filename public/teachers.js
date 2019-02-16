@@ -137,22 +137,34 @@ class InputInstructorModalContent extends React.Component {
     userSchoolId: "",
     userName: "",
     userType: "teacher",
-    alert: "Please Fill Up All Fields"
+    alert: ""
   };
 
-  isUserIdAvailable = (callback = () => {}) => {
+  isUserIdAvailable =  (callback = () => {},target) => {
     let sup = this;
     let instructorIdInput = document.querySelector("#instructorIdInput").value;
+
     db.collection("users")
       .where("userSchoolId", "==", instructorIdInput)
       .onSnapshot(querySnapshot => {
         sup.setState({
           alert: querySnapshot.empty ? "" : "ID Taken"
         });
+        if (querySnapshot.empty) {
+          sup.isEmailAvailable(callback,target);
+        }else{
+          target.disabled = false
+          setTimeout(
+            function() {
+            sup.setState({
+              alert:""
+            })
+            }, 2000);
+        }
       });
   };
 
-  isEmailAvailable = (callback = () => {}) => {
+  isEmailAvailable = (callback = () => {},target) => {
     let sup = this;
     let instructorEmail = document.querySelector("#instructorEmail").value;
 
@@ -162,6 +174,17 @@ class InputInstructorModalContent extends React.Component {
         sup.setState({
           alert: querySnapshot.empty ? "" : "Email Taken"
         });
+        if (querySnapshot.empty) {
+          callback();
+        }else{
+          target.disabled = false
+          setTimeout(
+            function() {
+            sup.setState({
+              alert:""
+            })
+            }, 3000);
+        }
       });
   };
 
@@ -195,7 +218,7 @@ class InputInstructorModalContent extends React.Component {
                 this.setState({
                   email: text.target.value
                 });
-                this.isEmailAvailable();
+                // this.isEmailAvailable();
               }}
               defaultValue={this.state.email}
             />
@@ -212,7 +235,6 @@ class InputInstructorModalContent extends React.Component {
                 this.setState({
                   userSchoolId: text.target.value
                 });
-                this.isUserIdAvailable();
               }}
               defaultValue={this.state.teacherId}
             />
@@ -247,7 +269,10 @@ class InputInstructorModalContent extends React.Component {
           </button>
           <button
             type="button"
-            onClick={() => this.isUserIdAvailable(this.saveInStructor)}
+            onClick={(e) =>{
+              e.target.disabled = true
+              this.isUserIdAvailable(this.saveInStructor,e.target)
+            }}
             className="btn btn-primary"
           >
             Save changes

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- update the version number as needed -->
+
+    <style>
+      body {
+        height: 100%;
+      }
+      html {
+        height: 100%;
+      }
+      .the-nun {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .active {
+        color: white !important;
+        background-color: rgb(39, 39, 39) !important;
+      }
+      .small-icn {
+        font-size: 20px;
+      }
+      .modal-backdrop {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCNwVwibl12fo73OrZH4hQ9QC8LPvWkOIo",
+      authDomain: "classrecordsystem-f6067.firebaseapp.com",
+      databaseURL: "https://classrecordsystem-f6067.firebaseio.com",
+      projectId: "classrecordsystem-f6067",
+      storageBucket: "classrecordsystem-f6067.appspot.com",
+      messagingSenderId: "345531015638"
+    };
+    const firebaseApp = firebase.initializeApp(config);
+    const db = firebaseApp.firestore();
+    let num = 0;
+    db.settings({ timestampsInSnapshots: true });
+   
+      db.collection("studentClasses").onSnapshot(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          // console.log(doc.data());
+          db.collection("studentProfile")
+            .doc(doc.data().studentUserId)
+            .onSnapshot(studentData => {
+              // console.log(studentData.data());
+              db.collection("studentClasses")
+                .doc(doc.data().key)
+                //   .doc("eGGn2yXIxd1YTRGxJ3uz")
+                .update({ ...studentData.data() })
+                .then(function() {
+                  console.log(
+                    "Document successfully updated! + " + doc.data().key
+                  );
+                  num++;
+                  console.log(num);
+                });
+            });
+        });
+      });
+    
+
+ 
+  </script>
+
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</html>
