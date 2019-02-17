@@ -26,8 +26,6 @@ exports.createUser = functions.firestore
     });
   });
 
-
-
 exports.deleteUserRecord = functions.auth.user().onDelete(user => {
   // ...
   return firestore
@@ -114,7 +112,6 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
       }
     });
 });
-
 
 exports.createStudentProfileClasses = functions.firestore
   .document("studentClasses")
