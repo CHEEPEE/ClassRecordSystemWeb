@@ -39,6 +39,12 @@ class ManageDepartment extends React.Component {
         $("#inputDepartment").val("");
       });
   }
+  closeDepartment = () => {
+    ReactDOM.render(
+      <React.Fragment>{""}</React.Fragment>,
+      document.querySelector("#manageDepartmentContainer")
+    );
+  };
 
   componentDidMount() {
     this.getDepartment();
@@ -48,7 +54,7 @@ class ManageDepartment extends React.Component {
     return (
       <React.Fragment>
         <div className="row mt-5 ml-3">
-          <h1>Manage Department</h1>
+          <h3>COLLEGE MANAGEMENT</h3>
         </div>
         <div className="row ml-3 mt-2">
           <div className="col">
@@ -57,7 +63,7 @@ class ManageDepartment extends React.Component {
                 type="button"
                 data-toggle="modal"
                 data-target="#addDepartmentModal"
-                className="btn btn-dark"
+                className="btn btn-dark d-none"
               >
                 Add Department
               </button>
@@ -155,6 +161,13 @@ class DepartmentItem extends React.Component {
         key={this.props.id}
         department={this.props.department}
         id={this.props.id}
+        close={() => {
+          ReactDOM.render(
+            "",
+            document.querySelector("#manageDepartmentContainer")
+          );
+          ReactDOM.render("", document.querySelector("#manageYearLevel"));
+        }}
       />,
       document.querySelector("#manageDepartmentContainer")
     );
@@ -269,7 +282,16 @@ class ManageDepartmentItem extends React.Component {
       <div className="container-fluid p-2">
         <div className="row shadow p-2">
           <div className="col-12">
-            <h5>{this.props.department}</h5>
+            <div className="row">
+              <div className="col">
+                <h5>{this.props.department}</h5>
+              </div>
+              <div className="col-1 align-self-end" onClick={this.props.close}>
+                <button type="button" className="close" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
           </div>
           <div className="col-12" id="programsContainer">
             <Programs key={this.props.id} id={this.props.id} />
@@ -341,15 +363,17 @@ class Programs extends React.Component {
     return (
       <React.Fragment>
         <div className="row p-2">
-          <button
-            type="button"
-            data-toggle="modal"
-            data-target="#addProgram"
-            className="btn btn-dark"
-            onClick={this.togleAddProgram.bind(this)}
-          >
-            Add Program
-          </button>
+          <div className="col">
+            <button
+              type="button"
+              data-toggle="modal"
+              data-target="#addProgram"
+              className="btn btn-dark"
+              onClick={this.togleAddProgram.bind(this)}
+            >
+              Add Program
+            </button>
+          </div>
         </div>
         <div className={"row " + this.state.tgProgram}>
           <div className="col">
@@ -484,7 +508,7 @@ class YearLevelContainer extends React.Component {
       .where("program", "==", this.props.id)
       .orderBy("yearLevel", "asc")
       .onSnapshot(function(querySnapshot) {
-         let dataObject = [];
+        let dataObject = [];
         querySnapshot.forEach(function(doc) {
           // doc.data() is never undefined for query doc snapshots
           dataObject.push(doc.data());
@@ -504,22 +528,40 @@ class YearLevelContainer extends React.Component {
         );
       });
   }
+  closesYearLevel = () => {
+    ReactDOM.render("", document.querySelector("#manageYearLevel"));
+  };
   componentDidMount() {
     this.getYearLevel();
   }
+
   render() {
     return (
       <React.Fragment>
         <div className="w-100 shadow-sm p-2">
           <div className="row mb-5">
             <div className="col">
-              <button
-                type="button"
-                className="btn btn-sm btn-dark"
-                onClick={this.addYearLevel.bind(this)}
-              >
-                Add YearLevel
-              </button>
+              <div className="row">
+                <div className="col">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-dark"
+                    onClick={this.addYearLevel.bind(this)}
+                  >
+                    Add YearLevel
+                  </button>
+                </div>
+                <div
+                  className="col"
+                  onClick={() => {
+                    this.closesYearLevel();
+                  }}
+                >
+                  <button type="button" className="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
           <div className="row">
@@ -541,7 +583,7 @@ class YearLevelItem extends React.Component {
         .doc(key)
         .set({
           key: key,
-          section:section,
+          section: section,
           program: sup.props.program,
           department: sup.props.department,
           yearLevel: sup.props.id
@@ -549,17 +591,21 @@ class YearLevelItem extends React.Component {
     }
   }
   removeYearLevel() {
-    let context = this
-    if(confirm("Remove Yearl Level?")){
+    let context = this;
+    if (confirm("Remove Yearl Level?")) {
       console.log(context.props.id);
-      db.collection("yearlevel").doc(context.props.id).delete().then(()=>{
-        console.log("Success");
-      }).catch(function(error) {
-        console.error("Error removing document: ", error);
-    });
+      db.collection("yearlevel")
+        .doc(context.props.id)
+        .delete()
+        .then(() => {
+          console.log("Success");
+        })
+        .catch(function(error) {
+          console.error("Error removing document: ", error);
+        });
     }
   }
-  getSections(){
+  getSections() {
     let sup = this;
     db.collection("section")
       .where("yearLevel", "==", this.props.id)
@@ -574,7 +620,7 @@ class YearLevelItem extends React.Component {
           <SectionItem
             key={object.key}
             id={object.key}
-            section = {object.section}
+            section={object.section}
             department={object.department}
             program={object.program}
             yearLevel={object.yearLevel}
@@ -582,12 +628,12 @@ class YearLevelItem extends React.Component {
         ));
         ReactDOM.render(
           <React.Fragment>{listItem}</React.Fragment>,
-          document.querySelector("#section"+sup.props.id)
+          document.querySelector("#section" + sup.props.id)
         );
       });
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getSections();
   }
   render() {
@@ -599,22 +645,26 @@ class YearLevelItem extends React.Component {
               <h3>{this.props.yearLevel}</h3>
             </div>
             <div className="col">
-              <button type="button"
-              onClick = {this.addSection.bind(this)}
-              className="btn btn-sm btn-dark">
+              <button
+                type="button"
+                onClick={this.addSection.bind(this)}
+                className="btn btn-sm btn-dark"
+              >
                 Add Section
               </button>
             </div>
-            <div className = "col">
-            <button type="button"
-              onClick = {this.removeYearLevel.bind(this)}
-              className="btn btn-sm btn-danger">
-               Remove
+            <div className="col">
+              <button
+                type="button"
+                onClick={this.removeYearLevel.bind(this)}
+                className="btn btn-sm btn-danger"
+              >
+                Remove
               </button>
             </div>
           </div>
-          <div className = "row">
-            <div className = "group-list w-100" id = {"section"+this.props.id}></div>
+          <div className="row">
+            <div className="group-list w-100" id={"section" + this.props.id} />
           </div>
         </div>
         <div className="row" />
@@ -623,25 +673,27 @@ class YearLevelItem extends React.Component {
   }
 }
 class SectionItem extends React.Component {
-  state = {  }
-  deleteSection(){
-   let deleteSection  =  confirm("Press a button!");
-    if(deleteSection){
-      db.collection("section").doc(this.props.id).delete();
+  state = {};
+  deleteSection() {
+    let deleteSection = confirm("Press a button!");
+    if (deleteSection) {
+      db.collection("section")
+        .doc(this.props.id)
+        .delete();
     }
   }
-  render() { 
-    return (  
+  render() {
+    return (
       <React.Fragment>
-        <div className = "list-group-item border-0">
-          <div className = "row">
-            <div className = "col">
-              {this.props.section}
-            </div>
-            <div className = "col">
-            <button type="button"
-              onClick = {this.deleteSection.bind(this)}
-              className="btn btn-sm btn-danger">
+        <div className="list-group-item border-0">
+          <div className="row">
+            <div className="col">{this.props.section}</div>
+            <div className="col">
+              <button
+                type="button"
+                onClick={this.deleteSection.bind(this)}
+                className="btn btn-sm btn-danger"
+              >
                 Delete
               </button>
             </div>
@@ -651,4 +703,3 @@ class SectionItem extends React.Component {
     );
   }
 }
- 

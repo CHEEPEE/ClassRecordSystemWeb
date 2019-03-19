@@ -140,7 +140,7 @@ class InputInstructorModalContent extends React.Component {
     alert: ""
   };
 
-  isUserIdAvailable =  (callback = () => {},target) => {
+  isUserIdAvailable = (callback = () => {}, target) => {
     let sup = this;
     let instructorIdInput = document.querySelector("#instructorIdInput").value;
 
@@ -151,20 +151,19 @@ class InputInstructorModalContent extends React.Component {
           alert: querySnapshot.empty ? "" : "ID Taken"
         });
         if (querySnapshot.empty) {
-          sup.isEmailAvailable(callback,target);
-        }else{
-          target.disabled = false
-          setTimeout(
-            function() {
+          sup.isEmailAvailable(callback, target);
+        } else {
+          target.disabled = false;
+          setTimeout(function() {
             sup.setState({
-              alert:""
-            })
-            }, 2000);
+              alert: ""
+            });
+          }, 2000);
         }
       });
   };
 
-  isEmailAvailable = (callback = () => {},target) => {
+  isEmailAvailable = (callback = () => {}, target) => {
     let sup = this;
     let instructorEmail = document.querySelector("#instructorEmail").value;
 
@@ -176,14 +175,13 @@ class InputInstructorModalContent extends React.Component {
         });
         if (querySnapshot.empty) {
           callback();
-        }else{
-          target.disabled = false
-          setTimeout(
-            function() {
+        } else {
+          target.disabled = false;
+          setTimeout(function() {
             sup.setState({
-              alert:""
-            })
-            }, 3000);
+              alert: ""
+            });
+          }, 3000);
         }
       });
   };
@@ -269,9 +267,9 @@ class InputInstructorModalContent extends React.Component {
           </button>
           <button
             type="button"
-            onClick={(e) =>{
-              e.target.disabled = true
-              this.isUserIdAvailable(this.saveInStructor,e.target)
+            onClick={e => {
+              e.target.disabled = true;
+              this.isUserIdAvailable(this.saveInStructor, e.target);
             }}
             className="btn btn-primary"
           >
@@ -323,6 +321,14 @@ class TeacherItem extends React.Component {
       .doc(this.props.id)
       .update("accountStatus", "block");
   }
+  deleteUser = () => {
+    db.collection("deleteUser")
+      .doc("delete")
+      .update({ userId: this.props.id });
+    db.collection("teacherProfile")
+      .doc(this.props.id)
+      .update("accountStatus", "Deleting . . ");
+  };
 
   getTeacherUserDetails() {
     let sup = this;
@@ -500,6 +506,33 @@ class TeacherItem extends React.Component {
                     href="#"
                   >
                     Block
+                  </a>
+                  <a
+                    className="dropdown-item"
+                    onClick={() => {
+                      // let enterPassword = prompt(
+                      //   "Please enter password to delete",
+                      //   ""
+                      // );
+                      // if (enterPassword != null) {
+                      //   db.collection("users")
+                      //     .doc(firebase.auth().currentUser.uid)
+                      //     .get()
+                      //     .then(data => {
+                      //       if (data.data().password == enterPassword) {
+
+                      //       } else {
+                      //         alert("Password Incorrect");
+                      //       }
+                      //     });
+                      // }
+                      if (confirm("delete User?")) {
+                        this.deleteUser();
+                      }
+                    }}
+                    href="#"
+                  >
+                    Delete
                   </a>
                 </div>
               </div>

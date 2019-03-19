@@ -26,6 +26,28 @@ exports.createUser = functions.firestore
     });
   });
 
+exports.deleteUser = functions.firestore
+  .document("deleteUser/delete")
+  .onWrite((change, context) => {
+    // ... Your code here
+    // console.log(change.after.data());
+    let userId = change.after.data().userId;
+    // let password = change.after.data().password;
+
+    return admin
+      .auth()
+      .deleteUser(userId)
+      .then(function() {
+        firestore
+          .collection("teacherProfile")
+          .doc(userId)
+          .delete();
+      })
+      .catch(function(error) {
+        console.log("Error deleting user:", error);
+      });
+  });
+
 exports.deleteUserRecord = functions.auth.user().onDelete(user => {
   // ...
   return firestore
@@ -113,26 +135,26 @@ exports.afterCreateUser = functions.auth.user().onCreate(user => {
     });
 });
 
-exports.createStudentProfileClasses = functions.firestore
-  .document("studentClasses")
-  .onCreate((change, context) => {
-    // ... Your code here
-    console.log(change.after.data());
+// exports.createStudentProfileClasses = functions.firestore
+//   .document("studentClasses")
+//   .onCreate((change, context) => {
+//     // ... Your code here
+//     console.log(change.after.data());
 
-    return firestore
-      .collection("studentProfile")
-      .doc(change.after.data().studentUserId)
-      .onSnapshot(studentData => {
-        // console.log(studentData.data());
-        firestore
-          .collection("studentClasses")
-          .doc(change.after.data().key)
-          //   .doc("eGGn2yXIxd1YTRGxJ3uz")
-          .update(...studentData.data())
-          .then(function() {
-            console.log(
-              "Document successfully updated! + " + change.after.data().key
-            );
-          });
-      });
-  });
+//     return firestore
+//       .collection("studentProfile")
+//       .doc(change.after.data().studentUserId)
+//       .onSnapshot(studentData => {
+//         // console.log(studentData.data());
+//         firestore
+//           .collection("studentClasses")
+//           .doc(change.after.data().key)
+//           //   .doc("eGGn2yXIxd1YTRGxJ3uz")
+//           .update(...studentData.data())
+//           .then(function() {
+//             console.log(
+//               "Document successfully updated! + " + change.after.data().key
+//             );
+//           });
+//       });
+//   });
