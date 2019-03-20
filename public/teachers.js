@@ -561,6 +561,13 @@ class TeacherItem extends React.Component {
 
 class TeacherSubjectItem extends React.Component {
   state = {};
+  printReport = () => {
+    var win = window.open(
+      "printreport.html?classId=" + this.props.classKey,
+      "_blank"
+    );
+    win.focus();
+  };
   addToList() {
     let sup = this;
     let studentName = $("#addToListStudents" + this.props.classKey).val();
@@ -603,6 +610,7 @@ class TeacherSubjectItem extends React.Component {
         );
       });
   }
+
   componentDidMount() {
     this.getstudentList();
   }
@@ -619,6 +627,11 @@ class TeacherSubjectItem extends React.Component {
             >
               List
             </div>
+          </div>
+          <div className="col">
+            <div onClick = {()=>{
+              this.printReport()
+            }} className="btn btn-dark">Report</div>
           </div>
         </div>
         {/* registerTeacherModal */}
