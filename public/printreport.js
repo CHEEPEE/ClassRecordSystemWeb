@@ -51,6 +51,9 @@ class PrintReportContainer extends React.Component {
         );
       });
   };
+  print = () => {
+    window.print();
+  };
   componentDidMount() {
     this.getParam();
   }
@@ -62,7 +65,15 @@ class PrintReportContainer extends React.Component {
       }
     } = this;
     return (
-      <div className="row bg-white" style={{ margin: 50 }}>
+      <div
+        className="row bg-white"
+        style={{
+          marginTop: 50,
+          alignSelf: "center",
+          marginLeft: "12%",
+          marginRight: "12%"
+        }}
+      >
         <div className="col">
           <div className="row">
             <div className="col">
@@ -74,23 +85,23 @@ class PrintReportContainer extends React.Component {
             </div>
           </div>
           <div className="row">
-            <div className="col">Subject :</div>
+            <div className="col-2">Subject :</div>
             <div className="col">{name}</div>
           </div>
           <div className="row">
-            <div className="col">Title :</div>
+            <div className="col-2">Title :</div>
             <div className="col">{description}</div>
           </div>
           <div className="row">
-            <div className="col">Units :</div>
+            <div className="col-2">Units :</div>
             <div className="col">{0}</div>
           </div>
           <div className="row">
-            <div className="col">Instructor :</div>
+            <div className="col-2">Instructor :</div>
             <div className="col">{teacherName}</div>
           </div>
           <div className="row">
-            <div className="col">School Year :</div>
+            <div className="col-2 s">School Year :</div>
             <div className="col">{name}</div>
           </div>
           <div className="row mt-5" />
@@ -105,10 +116,62 @@ class PrintReportContainer extends React.Component {
             {/* student list Container */}
           </div>
 
-          <div className="row">
-            <div className="col">fist section</div>
-            <div className="col">second section</div>
+          <div className="row" style={{ marginTop: 200 }}>
+            <div className="col">
+              <center>
+                <div class="form-group w-75">
+                  <input
+                    type="email"
+                    class="form-control border-0"
+                    style={{ textTransform: "uppercase", textAlign: "center" }}
+                    id="exampleInputEmail1"
+                    aria-describedby="emailHelp"
+                    placeholder="Enter email"
+                  />
+                  <hr />
+                  <small id="emailHelp" class="form-text text-muted">
+                    DEAN
+                  </small>
+                </div>
+              </center>
+            </div>
+            <div className="col">
+              <center>
+                <div class="form-group border-0 w-75">
+                  <input
+                    type="email"
+                    class="form-control border-0"
+                    style={{ textTransform: "uppercase", textAlign: "center" }}
+                    id="exampleInputEmail1"
+                    aria-describedby="emailHelp"
+                    placeholder="Enter email"
+                  />
+                  <hr />
+                  <small id="emailHelp" class="form-text text-muted">
+                    REGISTRAR
+                  </small>
+                </div>
+              </center>
+            </div>
           </div>
+          <div className="row" style={{ marginTop: 100 }}>
+            <div className="col">
+              Note: Instructor should sign below the last entry
+            </div>
+          </div>
+          <div className="row">
+            <div className="col" />
+          </div>
+          <button
+            onClick={() => {
+              this.print();
+            }}
+            type="button"
+            class="btn btn-primary d-print-none"
+            style={{ marginTop: 50 }}
+          >
+            Print
+          </button>
         </div>
       </div>
     );
@@ -128,7 +191,7 @@ class StudentItemListReport extends React.Component {
         let docLength = 0;
         docs.forEach(doc => {
           grade += doc.data().grade;
-          docLength++
+          docLength++;
         });
         let finalGrade = docLength == 2 ? grade / 2 : "No Grade Yet";
         this.setState({ finalGrade: finalGrade });
